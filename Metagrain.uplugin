@@ -1,0 +1,39 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Metagrain",
+	"Description": "Granular Synth",
+	"Category": "Other",
+	"CreatedBy": "Maksym Kokoiev",
+	"CreatedByURL": "https://maxkokomusic.com/",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.4.4",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": true,
+	"Installed": true,
+	"SupportedTargetPlatforms": [
+		"Win64",
+		"Mac"
+	],
+	"Modules": [
+		{
+			"Name": "Metagrain",
+			"Type": "Runtime",
+			"LoadingPhase": "EarliestPossible",
+			"PlatformAllowList": [
+				"Win64",
+				"Mac"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "Metasound",
+			"Enabled": true
+		}
+	]
+}

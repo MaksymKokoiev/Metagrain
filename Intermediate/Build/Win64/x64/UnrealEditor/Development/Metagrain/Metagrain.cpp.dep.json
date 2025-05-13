@@ -1,0 +1,14 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\maksy\\documents\\unreal projects\\audioproguy\\plugins\\metagrain\\source\\metagrain\\private\\metagrain.cpp",
+        "ProvidedModule": "",
+        "PCH": "c:\\users\\maksy\\documents\\unreal projects\\audioproguy\\intermediate\\build\\win64\\x64\\audioproguyeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.inclorderoldest.h.pch",
+        "Includes": [
+            "c:\\users\\maksy\\documents\\unreal projects\\audioproguy\\plugins\\metagrain\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\metagrain\\definitions.metagrain.h",
+            "c:\\users\\maksy\\documents\\unreal projects\\audioproguy\\plugins\\metagrain\\source\\metagrain\\public\\metagrain.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
