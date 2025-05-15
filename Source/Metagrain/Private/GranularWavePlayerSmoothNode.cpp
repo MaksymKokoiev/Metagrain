@@ -37,7 +37,6 @@
 namespace Metasound
 {
     // --- Parameter Names ---
-    // Rename the parameter namespace to avoid conflicts
     namespace GranularWavePlayerSmoothNode_Params
     {
         // Trigger inputs
@@ -50,8 +49,9 @@ namespace Metasound
         // Float parameters
         METASOUND_PARAM(InParamGrainDuration, "Grain Duration (ms)", "Duration of each grain in milliseconds.");
         METASOUND_PARAM(InParamGrainsPerSecond, "Grains Per Sec", "Number of grains triggered per second.");
-        METASOUND_PARAM(InParamPlaybackSpeed, "Speed (%)", "Playback speed as a percentage (0-800%). Set to 0% to freeze playback and enable manual position scrubbing.");
-        METASOUND_PARAM(InParamPlayPosition, "Position (%)", "Current playback position as percentage of total wave length (0-100%).");
+        METASOUND_PARAM(InParamPlaybackSpeed, "Speed (%)", "Playback speed as a percentage (0-800%). Set to 0 (%) to freeze playback and enable manual position scrubbing.");
+        METASOUND_PARAM(InParamPlayPosition, "Position (%)", "Current playback position as percentage of total wave length (0-100%). Only works when speed is 0%.");
+        METASOUND_PARAM(InParamPlayRange, "Play Range (ms)", "Defines the range in milliseconds where grains can be selected. Smaller values create tighter grain clusters, larger values create more spread-out textures.")
         METASOUND_PARAM(InParamStartPointRand, "Start Rand (ms)", "Random offset to grain start point in milliseconds.");
         METASOUND_PARAM(InParamDurationRand, "Duration Rand (ms)", "Random offset to grain duration in milliseconds.");
         METASOUND_PARAM(InParamAttackTimePercent, "Attack (%)", "Attack time as percentage of grain duration.");
@@ -63,7 +63,7 @@ namespace Metasound
         METASOUND_PARAM(InParamPan, "Pan", "Stereo pan position (-1.0 to 1.0).");
         METASOUND_PARAM(InParamPanRand, "Pan Rand", "Random pan deviation (0.0 to 1.0).");
         METASOUND_PARAM(InParamTimeJitter, "Time Jitter (ms)", "Random variation in grain trigger timing for a more organic sound (0-100ms).");
-        METASOUND_PARAM(InParamVolumeRand, "Volume Rand (%)", "Random volume variation (0-100%). At 0%, all grains play at full volume. At 100%, grains can play at any volume from silent to full.");
+        METASOUND_PARAM(InParamVolumeRand, "Volume Rand (%)", "Random volume variation (0-100%). At 0 (%), all grains play at full volume. At 100 (%), grains can play at any volume from silent to full.");
         METASOUND_PARAM(InParamSmoothing, "Attack Smoothing", "Reduces attack transients for smoother pad-like sounds (0-100%).");
         METASOUND_PARAM(InParamGrainOverlap, "Grain Overlap", "Controls how many grains overlap (1-5). Higher values create smoother textures.");
         
@@ -78,11 +78,10 @@ namespace Metasound
         METASOUND_PARAM(OutputTriggerOnGrain, "On Grain", "Triggered when a new grain starts.");
         METASOUND_PARAM(OutParamAudioLeft, "Out Left", "The left channel audio output.");
         METASOUND_PARAM(OutParamAudioRight, "Out Right", "The right channel audio output.");
-        METASOUND_PARAM(OutParamTime, "Time", "Current playback position as time value."); // Changed to Time type instead of ms
+        METASOUND_PARAM(OutParamTime, "Time", "Current playback position as time value.");
     }
 
     // --- Grain Voice Structure ---
-    // Renamed struct
     struct FWavePlayerSmoothGrainVoice
     {
         TUniquePtr<FSoundWaveProxyReader> Reader;
@@ -106,7 +105,6 @@ namespace Metasound
     };
 
     // --- Operator ---
-    // Renamed operator class
     class FGranularWavePlayerSmoothOperator : public TExecutableOperator<FGranularWavePlayerSmoothOperator>
     {
         static constexpr int32 MaxGrainVoices = 32;
@@ -151,6 +149,7 @@ namespace Metasound
             const FFloatReadRef& InVolumeRand,
             const FFloatReadRef& InSmoothing,
             const FFloatReadRef& InGrainOverlap,
+            const FFloatReadRef& InPlayRange,
             const FInt32ReadRef& InGrainDensity,
             const FInt32ReadRef& InWindowShape,
             const FInt32ReadRef& InXfadeCurve)
@@ -175,7 +174,7 @@ namespace Metasound
             , VolumeRandInput(InVolumeRand)
             , SmoothingInput(InSmoothing)
             , GrainOverlapInput(InGrainOverlap)
-            // Int inputs grouped together
+            , PlayRangeInput(InPlayRange)
             , GrainDensityInput(InGrainDensity)
             , WindowShapeInput(InWindowShape)
             , XfadeCurveInput(InXfadeCurve)
@@ -212,7 +211,6 @@ namespace Metasound
         // --- Metasound Node Interface ---
         static const FVertexInterface& DeclareVertexInterface()
         {
-            // Update namespace reference
             using namespace GranularWavePlayerSmoothNode_Params;
             static const FVertexInterface Interface(
                 FInputVertexInterface(
@@ -223,11 +221,12 @@ namespace Metasound
                     // Wave asset
                     TInputDataVertex<FWaveAsset>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamWaveAsset)),
                     
-                    // Float parameters
+                    // Float parameters - reorganized to group related controls
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamGrainDuration), 100.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamGrainsPerSecond), 10.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamPlaybackSpeed), 100.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamPlayPosition), 0.0f),
+                    TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamPlayRange), 1000.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamStartPointRand), 0.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamDurationRand), 0.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamAttackTimePercent), 0.1f),
@@ -265,7 +264,6 @@ namespace Metasound
             auto CreateNodeClassMetadata = []() -> FNodeClassMetadata
                 {
                     FNodeClassMetadata Metadata;
-                    // Fix the class name to be "GranularWavePlayerSmooth"
                     Metadata.ClassName = { FName("GranularWavePlayerSmooth"), FName(""), FName("") };
                     Metadata.MajorVersion = 1; Metadata.MinorVersion = 0;
                     Metadata.DisplayName = LOCTEXT("GranularWavePlayerSmooth_DisplayName", "Granular Wave Player Smooth");
@@ -309,6 +307,7 @@ namespace Metasound
             FFloatReadRef VolumeRandIn = InputData.GetOrCreateDefaultDataReadReference<float>(METASOUND_GET_PARAM_NAME(InParamVolumeRand), InParams.OperatorSettings);
             FFloatReadRef SmoothingIn = InputData.GetOrCreateDefaultDataReadReference<float>(METASOUND_GET_PARAM_NAME(InParamSmoothing), InParams.OperatorSettings);
             FFloatReadRef GrainOverlapIn = InputData.GetOrCreateDefaultDataReadReference<float>(METASOUND_GET_PARAM_NAME(InParamGrainOverlap), InParams.OperatorSettings);
+            FFloatReadRef PlayRangeIn = InputData.GetOrCreateDefaultDataReadReference<float>(METASOUND_GET_PARAM_NAME(InParamPlayRange), InParams.OperatorSettings);
             
             // Int params (grouped together)
             FInt32ReadRef GrainDensityIn = InputData.GetOrCreateDefaultDataReadReference<int32>(METASOUND_GET_PARAM_NAME(InParamGrainDensity), InParams.OperatorSettings);
@@ -320,7 +319,7 @@ namespace Metasound
                 GrainDurationIn, GrainsPerSecondIn, PlaybackSpeedIn, PlayPositionIn, 
                 StartPointRandIn, DurationRandIn, AttackTimePercentIn, DecayTimePercentIn, 
                 AttackCurveIn, DecayCurveIn, PitchShiftIn, PitchRandIn, PanIn, PanRandIn,
-                TimeJitterIn, VolumeRandIn, SmoothingIn, GrainOverlapIn,
+                TimeJitterIn, VolumeRandIn, SmoothingIn, GrainOverlapIn, PlayRangeIn,
                 GrainDensityIn, WindowShapeIn, XfadeCurveIn);
         }
 
@@ -349,6 +348,7 @@ namespace Metasound
             InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InParamVolumeRand), VolumeRandInput);
             InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InParamSmoothing), SmoothingInput);
             InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InParamGrainOverlap), GrainOverlapInput);
+            InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InParamPlayRange), PlayRangeInput);
             
             // Int parameters (grouped together)
             InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InParamGrainDensity), GrainDensityInput);
@@ -372,8 +372,6 @@ namespace Metasound
             using namespace GranularWavePlayerSmoothNode_Params;
             FDataReferenceCollection InputDataReferences;
             
-            // ...existing code with reordered parameters...
-            
             // Float parameters
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamGrainDuration), GrainDurationMsInput);
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamGrainsPerSecond), GrainsPerSecondInput);
@@ -393,6 +391,7 @@ namespace Metasound
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamVolumeRand), VolumeRandInput);
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamSmoothing), SmoothingInput);
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamGrainOverlap), GrainOverlapInput);
+            InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamPlayRange), PlayRangeInput);
             
             // Int parameters (grouped together)
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamGrainDensity), GrainDensityInput);
@@ -543,6 +542,8 @@ namespace Metasound
             const float Smoothing = FMath::Clamp(*SmoothingInput, 0.0f, 100.0f) / 100.0f;
             const float GrainOverlap = FMath::Clamp(*GrainOverlapInput, 1.0f, 5.0f);
             const int32 XfadeCurveIndex = FMath::Clamp(*XfadeCurveInput, 0, 2);
+            const float PlayRangeMs = FMath::Max(1.0f, *PlayRangeInput); // Ensure positive value
+            const float PlayRangeSeconds = PlayRangeMs / 1000.0f;
             
             // Detect changes in freeze state (for optimization purposes)
             const bool bFreezeStateChanged = bFreezed != bPreviousFreezeState;
@@ -653,7 +654,6 @@ namespace Metasound
             const float ClampedBaseStartPointSeconds = FMath::Min(BaseStartPointSeconds, EffectiveEndPointSeconds - MinGrainDurationSeconds);
 
             // --- Calculate Valid Start Point Randomization Range ---
-            // Use the same approach as GranularSynthNode_Step1.cpp - add positive random offset
             float PotentialMaxStartTime = ClampedBaseStartPointSeconds + MaxStartPointRandSeconds;
             float ValidRegionEndTime = FMath::Max(0.0f, EffectiveEndPointSeconds - MinGrainDurationSeconds);
             float ClampedMaxStartTime = FMath::Clamp(PotentialMaxStartTime, ClampedBaseStartPointSeconds, ValidRegionEndTime);
@@ -683,7 +683,6 @@ namespace Metasound
                 }
                 
                 // Trigger more grains if we're under the desired density
-                // Fix the FMath::Min call by adding proper type casting
                 float TriggerProbability = FMath::Min(1.0f, static_cast<float>(DesiredGrainDensity) / static_cast<float>(MaxGrainVoices));
 
                 while (SamplesUntilNextGrain <= ElapsedSamples) 
@@ -708,25 +707,35 @@ namespace Metasound
             {
                 float GrainStartTimeSeconds;
                 if (bFreezed) {
-                    // Use user's random offset even in freeze mode, but make it symmetric (±) 
-                    // instead of just positive to ensure a stable sound centered at the frozen position
-                    const float UserJitter = MaxStartPointRandSeconds * 0.5f; // Half applied before, half after position
+                    // In freeze mode, use a window centered on the position with additional bounds checks
+                    const float HalfWindowSizeSeconds = FMath::Min(PlayRangeSeconds * 0.5f, 
+                                                                CachedSoundWaveDuration * 0.5f); // Don't exceed half the file
                     
                     // Apply jitter while ensuring we stay within file bounds
-                    // Use at least a small jitter (0.5ms) even if user sets it to zero for proper grain overlap
-                    const float AppliedJitter = FMath::Max(0.0005f, UserJitter);
-                    
                     GrainStartTimeSeconds = FMath::FRandRange(
-                        PositionInSeconds - AppliedJitter, 
-                        PositionInSeconds + AppliedJitter);
+                        FMath::Max(0.0f, PositionInSeconds - HalfWindowSizeSeconds), 
+                        FMath::Min(CachedSoundWaveDuration - MinGrainDurationSeconds, PositionInSeconds + HalfWindowSizeSeconds));
                         
-                    // Final bounds check
+                    // Final bounds check (redundant but safe)
                     GrainStartTimeSeconds = FMath::Clamp(GrainStartTimeSeconds, 
                                                         0.0f, 
                                                         CachedSoundWaveDuration - MinGrainDurationSeconds);
-                } else {
-                    // Normal playback mode - use standard randomization
-                    GrainStartTimeSeconds = FMath::FRandRange(ClampedBaseStartPointSeconds, ClampedMaxStartTime);
+                } 
+                else {
+                    // In normal playback mode, ensure end position is strictly within file boundaries
+                    const float SafeEndPositionSeconds = FMath::Min(
+                        CurrentPlaybackPositionSeconds + PlayRangeSeconds,
+                        CachedSoundWaveDuration - MinGrainDurationSeconds);
+                        
+                    // Get random position between current position and properly bounded end position
+                    GrainStartTimeSeconds = FMath::FRandRange(
+                        CurrentPlaybackPositionSeconds,
+                        SafeEndPositionSeconds);
+                        
+                    // Final bounds check (redundant but safe)
+                    GrainStartTimeSeconds = FMath::Clamp(GrainStartTimeSeconds, 
+                                                       0.0f, 
+                                                       CachedSoundWaveDuration - MinGrainDurationSeconds);
                 }
                 
                 float DurationOffset = FMath::FRandRange(0.0f, MaxDurationRandSeconds);
@@ -1301,6 +1310,7 @@ namespace Metasound
         FFloatReadRef VolumeRandInput;
         FFloatReadRef SmoothingInput;
         FFloatReadRef GrainOverlapInput;
+        FFloatReadRef PlayRangeInput;
 
         // Int input params
         FInt32ReadRef GrainDensityInput;
@@ -1313,7 +1323,7 @@ namespace Metasound
         FTriggerWriteRef OnGrainTriggered;
         FAudioBufferWriteRef AudioOutputLeft;
         FAudioBufferWriteRef AudioOutputRight;
-        FTimeWriteRef TimeOutput; // Changed to FTimeWriteRef
+        FTimeWriteRef TimeOutput; 
         
         // --- Operator Settings ---
         float SampleRate;
