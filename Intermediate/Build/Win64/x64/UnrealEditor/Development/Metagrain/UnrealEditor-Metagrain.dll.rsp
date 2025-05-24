@@ -36,7 +36,8 @@
 /NODEFAULTLIB:"LIBCPD"
 /FUNCTIONPADMIN:6
 "C:\Users\maksy\Documents\Unreal Projects\AudioProGuy\Intermediate\Build\Win64\x64\AudioProGuyEditor\Development\UnrealEd\SharedPCH.UnrealEd.Project.ValApi.Cpp20.InclOrderOldest.h.obj"
-"C:\Users\maksy\Documents\Unreal Projects\AudioProGuy\Plugins\Metagrain\Intermediate\Build\Win64\x64\UnrealEditor\Development\Metagrain\GranularSynthNode_Wrapping.cpp.obj"
+"C:\Users\maksy\Documents\Unreal Projects\AudioProGuy\Plugins\Metagrain\Intermediate\Build\Win64\x64\UnrealEditor\Development\Metagrain\GranularSynthNode.cpp.obj"
+"C:\Users\maksy\Documents\Unreal Projects\AudioProGuy\Plugins\Metagrain\Intermediate\Build\Win64\x64\UnrealEditor\Development\Metagrain\GranularWavePlayerSmoothNode.cpp.obj"
 "C:\Users\maksy\Documents\Unreal Projects\AudioProGuy\Plugins\Metagrain\Intermediate\Build\Win64\x64\UnrealEditor\Development\Metagrain\Metagrain.cpp.obj"
 "C:\Users\maksy\Documents\Unreal Projects\AudioProGuy\Plugins\Metagrain\Intermediate\Build\Win64\x64\UnrealEditor\Development\Metagrain\Default.rc2.res"
 "..\Intermediate\Build\Win64\x64\UnrealEditor\Development\CoreUObject\UnrealEditor-CoreUObject.lib"
