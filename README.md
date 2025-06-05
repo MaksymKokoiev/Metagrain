@@ -56,7 +56,6 @@ Metagrain is a Plugin for Unreal Engine 5 that adds a "Granular Synth" node that
     * `On Play`: Triggers when playback is initiated.
     * `On Finished`: Triggers when playback stops (via Stop trigger or if no audio is loaded on Play).
     * `On Grain`: Triggers every time a new grain is successfully spawned. This is crucial for synchronizing external events or visualizing grain activity.
-    `[IMAGE_PLACEHOLDER_OutputTriggers.png]`
 * **Individual Grain Parameter Outputs (Tied to `On Grain`):**
     * `Grain Start Time (s)`: The actual start time of the spawned grain within the source audio.
     * `Grain Duration (s)`: The actual duration of the spawned grain.
