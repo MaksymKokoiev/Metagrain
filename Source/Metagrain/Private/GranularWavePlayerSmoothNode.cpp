@@ -253,7 +253,7 @@ namespace Metasound
                     TOutputDataVertex<FTrigger>(METASOUND_GET_PARAM_NAME_AND_METADATA(OutputTriggerOnGrain)),
                     TOutputDataVertex<FAudioBuffer>(METASOUND_GET_PARAM_NAME_AND_METADATA(OutParamAudioLeft)),
                     TOutputDataVertex<FAudioBuffer>(METASOUND_GET_PARAM_NAME_AND_METADATA(OutParamAudioRight)),
-                    TOutputDataVertex<FTime>(METASOUND_GET_PARAM_NAME_AND_METADATA(OutParamTime)) // Changed to Time type
+                    TOutputDataVertex<FTime>(METASOUND_GET_PARAM_NAME_AND_METADATA(OutParamTime)) 
                 )
             );
             return Interface;
@@ -364,7 +364,7 @@ namespace Metasound
             InOutVertexData.BindWriteVertex(METASOUND_GET_PARAM_NAME(OutputTriggerOnGrain), OnGrainTriggered);
             InOutVertexData.BindWriteVertex(METASOUND_GET_PARAM_NAME(OutParamAudioLeft), AudioOutputLeft);
             InOutVertexData.BindWriteVertex(METASOUND_GET_PARAM_NAME(OutParamAudioRight), AudioOutputRight);
-            InOutVertexData.BindWriteVertex(METASOUND_GET_PARAM_NAME(OutParamTime), TimeOutput); // Changed to Time
+            InOutVertexData.BindWriteVertex(METASOUND_GET_PARAM_NAME(OutParamTime), TimeOutput); 
         }
         
         virtual FDataReferenceCollection GetInputs() const override
@@ -410,7 +410,7 @@ namespace Metasound
             OutputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(OutputTriggerOnGrain), OnGrainTriggered);
             OutputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(OutParamAudioLeft), AudioOutputLeft);
             OutputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(OutParamAudioRight), AudioOutputRight);
-            OutputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(OutParamTime), TimeOutput); // Changed to Time
+            OutputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(OutParamTime), TimeOutput); 
             return OutputDataReferences;
         }
 
@@ -473,7 +473,7 @@ namespace Metasound
             {
                 AudioOutputLeft->Zero();
                 AudioOutputRight->Zero();
-                *TimeOutput = FTime::FromSeconds(0.0); // Use FTime::FromSeconds instead of time literal
+                *TimeOutput = FTime::FromSeconds(0.0); 
                 if (CurrentWaveProxy.IsValid() || CurrentNumChannels > 0 || ConvertDeinterleave.IsValid())
                 {
                     ResetVoices();

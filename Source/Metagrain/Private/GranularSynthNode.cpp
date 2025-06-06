@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved. // Or your copyright notice
 
-#include "Metagrain.h" // Assuming this is a custom header for your project
+#include "Metagrain.h" 
 #include "MetasoundExecutableOperator.h"
 #include "MetasoundPrimitives.h"
 #include "MetasoundNodeRegistrationMacro.h"
@@ -38,7 +38,7 @@
 namespace Metasound
 {
     // --- Parameter Names ---
-    namespace GranularSynthNode_VertexNames // Updated namespace
+    namespace GranularSynthNode_VertexNames 
     {
         // Inputs
         METASOUND_PARAM(InputTriggerPlay, "Play", "Start generating grains.");
@@ -191,7 +191,7 @@ namespace Metasound
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamActiveVoices), 1.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamReverseChance), 0.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamTimeJitter), 0.0f),
-                    TInputDataVertex<bool>(METASOUND_GET_PARAM_NAME_AND_METADATA(InputWarmStart), false), // Add new input vertex
+                    TInputDataVertex<bool>(METASOUND_GET_PARAM_NAME_AND_METADATA(InputWarmStart), false), 
                     TInputDataVertex<FTime>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamStartPoint)),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamStartPointRand), 0.0f),
                     TInputDataVertex<float>(METASOUND_GET_PARAM_NAME_AND_METADATA(InParamAttackTimePercent), 0.1f),
@@ -227,8 +227,8 @@ namespace Metasound
                 {
                     FNodeClassMetadata Metadata;
                     Metadata.ClassName = { FName("GranularSynth"), FName(""), FName("Metagrain") };
-                    Metadata.MajorVersion = 1; Metadata.MinorVersion = 12; // Incremented minor version
-                    Metadata.DisplayName = LOCTEXT("GranularSynth_DisplayName", "Granular Synth"); // Updated DisplayName
+                    Metadata.MajorVersion = 0; Metadata.MinorVersion = 6; 
+                    Metadata.DisplayName = LOCTEXT("GranularSynth_DisplayName", "Granular Synth"); 
                     Metadata.Description = LOCTEXT("GranularSynth_Description", "Granular synthesizer with active voice controls");
                     Metadata.Author = TEXT("Maksym Kokoiev & Wouter Meija");
                     Metadata.PromptIfMissing = Metasound::PluginNodeMissingPrompt;
@@ -272,7 +272,7 @@ namespace Metasound
                 StartPointIn, StartPointRandIn, ReverseChanceIn,
                 AttackTimePercentIn, DecayTimePercentIn, AttackCurveIn, DecayCurveIn,
                 PitchShiftIn, PitchRandIn, PanIn, PanRandIn, VolumeRandIn,
-                WarmStartIn); // Pass new input to constructor
+                WarmStartIn);
         }
 
         virtual void BindInputs(FInputVertexInterfaceData& InOutVertexData) override
@@ -297,7 +297,7 @@ namespace Metasound
             InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InParamPan), PanInput);
             InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InParamPanRand), PanRandInput);
             InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InParamVolumeRand), VolumeRandInput);
-            InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InputWarmStart), WarmStartInput); // Bind new input
+            InOutVertexData.BindReadVertex(METASOUND_GET_PARAM_NAME(InputWarmStart), WarmStartInput);
         }
         virtual void BindOutputs(FOutputVertexInterfaceData& InOutVertexData) override
         {
@@ -337,7 +337,7 @@ namespace Metasound
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamPan), PanInput);
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamPanRand), PanRandInput);
             InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InParamVolumeRand), VolumeRandInput);
-            InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InputWarmStart), WarmStartInput); // Add new input
+            InputDataReferences.AddDataReadReference(METASOUND_GET_PARAM_NAME(InputWarmStart), WarmStartInput); 
             return InputDataReferences;
         }
         virtual FDataReferenceCollection GetOutputs() const override
@@ -910,7 +910,6 @@ namespace Metasound
                     }
                     // If InFrameRatio is pitch (e.g., 2.0 = octave up = plays twice as fast),
                     // then FramesActuallyRead (source) will produce FramesActuallyRead / InFrameRatio output samples.
-                    // We want to ensure the grain doesn't play longer than its intended OutputGrainDurationSamples.
                     int32 MaxPossibleOutputSamplesFromReadSegment = FMath::Max(1, FMath::CeilToInt(static_cast<float>(FramesActuallyRead) / InFrameRatio));
                     ActualOutputGrainSamplesForVoice = FMath::Min(InOutputGrainDurationSamples, MaxPossibleOutputSamplesFromReadSegment);
                     ActualOutputGrainSamplesForVoice = FMath::Max(1, ActualOutputGrainSamplesForVoice);
@@ -921,7 +920,7 @@ namespace Metasound
                     NewVoice.Reader.Reset();
                     return false;
                 }
-                NewVoice.Reader.Reset(); // Reader is only for this initial segment grab in reverse
+                NewVoice.Reader.Reset();
             }
             else
             {
@@ -1011,7 +1010,7 @@ namespace Metasound
         FTimeReadRef StartPointTimeInput; FFloatReadRef StartPointRandMsInput; FFloatReadRef ReverseChanceInput;
         FFloatReadRef AttackTimePercentInput; FFloatReadRef DecayTimePercentInput; FFloatReadRef AttackCurveInput; FFloatReadRef DecayCurveInput;
         FFloatReadRef PitchShiftInput; FFloatReadRef PitchRandInput; FFloatReadRef PanInput; FFloatReadRef PanRandInput; FFloatReadRef VolumeRandInput;
-        FBoolReadRef WarmStartInput; // New input
+        FBoolReadRef WarmStartInput; 
 
         // Output WriteRefs
         FTriggerWriteRef OnPlayTrigger; FTriggerWriteRef OnFinishedTrigger; FTriggerWriteRef OnGrainTriggered;
@@ -1035,15 +1034,15 @@ namespace Metasound
     };
 
     // --- Node Facade ---
-    class FGranularSynthNode : public FNodeFacade // Updated class name
+    class FGranularSynthNode : public FNodeFacade 
     {
     public:
-        FGranularSynthNode(const FNodeInitData& InitData) // Updated class name
-            : FNodeFacade(InitData.InstanceName, InitData.InstanceID, TFacadeOperatorClass<FGranularSynthOperator>()) // Updated class name
+        FGranularSynthNode(const FNodeInitData& InitData) 
+            : FNodeFacade(InitData.InstanceName, InitData.InstanceID, TFacadeOperatorClass<FGranularSynthOperator>()) 
         {
         }
     };
 
-    METASOUND_REGISTER_NODE(FGranularSynthNode) // Updated class name
+    METASOUND_REGISTER_NODE(FGranularSynthNode) 
 }
 #undef LOCTEXT_NAMESPACE
