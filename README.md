@@ -2,8 +2,64 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 
-A custom Metasound node for Unreal Engine that provides powerful and flexible granular synthesis capabilities. This node allows sound designers and developers to create rich, evolving textures, soundscapes, and unique audio effects by deconstructing audio assets into small fragments (grains) and re-synthesizing them with a high degree of control.
+[Download Latest Release v0.5.0a](https://github.com/MaksymKokoiev/Metagrain/releases/download/v0.5.0a/Metagrain_0_5_0a.zip)
 
+[Installation Instructions Below](#installation)
+
+[Features](#features)
+
+[Roadmap](#roadmap)
+
+[Contribute](#contributing)
+
+## Introduction
+
+A custom Metasound node for Unreal Engine that provides powerful and flexible granular synthesis capabilities. 
+
+This node allows sound designers and developers to create rich, evolving textures, soundscapes, and unique audio effects by deconstructing audio assets into small fragments (grains) and re-synthesizing them with a high degree of control.
+
+Made by Maksym Kokoiev [Max Koko](https://maxkokomusic.com/)
+
+in Collaboration with Wouter Meijer [Wouter Auris](https://auris-media.com/)
+
+![Alt text](Metagrain_GranularSynth1.jpg?raw=true)
+
+
+## Installation
+### Requirements
+Unreal Engine >5.4
+
+This release was not tested with Unreal Engine versions previous to 5.4
+
+### PC
+1.  **Download:**
+    * Download the latest realese
+2.  **Add to Project:**
+    * Create a `/Plugins` folder in your Unreal Engine project's root directory if it doesn't already exist.
+    * Unzip the archive you downloaded inside `/Plugins`
+    * The structure should be something like `MyProject/Plugins/Metagrain/..`
+3.  **Enable Plugin:**
+    * Open your project in Unreal Editor.
+    * Go to `Edit > Plugins`.
+    * Find `Metagrain` plugin and ensure it is enabled.
+    * Restart the editor if prompted.
+
+  ### Mac OS
+  ⚠️ This release **does not include pre-compiled binaries for macOS.** 
+  Mac users will need to compile the plugin from source by following the instructions below.
+
+**Instructions to Compile on macOS:**
+
+1. **Download**
+   * Download the Source code (zip) from this release page.
+2. **Add to your UE5 Project**
+   * Navigate to your Unreal Engine project's root directory. Create a Plugins folder if it doesn't already exist.
+   * Unzip the downloaded archive and place the Metagrain folder inside your Plugins directory.
+3. **Build**
+   * Right-click your project's .uproject file and select Services > Generate Xcode Project.
+   * Open the generated .xcworkspace file in Xcode.
+   * Select your project as the build target (e.g., "MyProjectEditor - Mac") and build it by pressing Cmd+B.
+   * Once the build is successful, you can launch the editor and the plugin will be available to use.
 
 ## Features
 
@@ -64,20 +120,6 @@ Metagrain is a Plugin for Unreal Engine 5 that adds a "Granular Synth" node that
     * `Grain Pitch (semitones)`: The actual pitch shift of the spawned grain.
     * `Grain Pan (-1 to 1)`: The actual stereo pan position of the spawned grain.
 
-
-## Installation
-
-1.  **Download:**
-    * Download the latest realese
-2.  **Add to Project:**
-    * Create a `/Plugins` folder in your Unreal Engine project's root directory if it doesn't already exist.
-    * Unzip the archive you downloaded inside `/Plugins`
-    * The structure should be something like `MyProject/Plugins/Metagrain/..`
-3.  **Enable Plugin:**
-    * Open your project in Unreal Editor.
-    * Go to `Edit > Plugins`.
-    * Find `Metagrain` plugin and ensure it is enabled.
-    * Restart the editor if prompted.
 
 ## Usage
 
