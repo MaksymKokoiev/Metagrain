@@ -268,7 +268,7 @@ namespace Metasound
                     Metadata.MajorVersion = 1; Metadata.MinorVersion = 0;
                     Metadata.DisplayName = LOCTEXT("GranularWavePlayerSmooth_DisplayName", "Granular Wave Player Smooth");
                     Metadata.Description = LOCTEXT("GranularWavePlayerSmooth_Description", "Granular wave player optimized for smooth pad-like textures");
-                    Metadata.Author = TEXT("Metasound");
+                    Metadata.Author = TEXT("Maksym Kokoiev & Wouter Meija");
                     Metadata.PromptIfMissing = Metasound::PluginNodeMissingPrompt;
                     Metadata.DefaultInterface = DeclareVertexInterface();
                     Metadata.CategoryHierarchy = { LOCTEXT("GranularWavePlayerCategory", "Synth") };
